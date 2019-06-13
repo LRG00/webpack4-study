@@ -4,6 +4,7 @@ const UglifyPlugin = require('uglifyjs-webpack-plugin')
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
   entry: "./src/index.js",
@@ -38,6 +39,10 @@ module.exports = {
         test: /\.jsx?/,
         include: [path.resolve(__dirname, "src")],
         use: "babel-loader"
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader'
       },
       {
         test: /\.css$/,
@@ -79,6 +84,7 @@ module.exports = {
     // 如果你留意了我们一开始直接使用 webpack 构建的结果，你会发现默认已经使用了 JS 代码压缩的插件
     // 这其实也是我们命令中的 --mode production 的效果，后续的小节会介绍 webpack 的 mode 参数
     new UglifyPlugin(),
+    new VueLoaderPlugin(),
     // 通过 html-webpack-plugin 就可以将我们的页面和构建 JS 关联起来
     new HtmlWebpackPlugin({
       filename: "index.html", // 配置输出文件名和路径
