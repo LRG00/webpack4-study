@@ -1,5 +1,7 @@
 <template>
-  <div id="app">{{msg}}</div>
+  <div id="app">
+    <el-button>xxx</el-button>
+  </div>
 </template>
 <script>
 export default {
