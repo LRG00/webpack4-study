@@ -1,12 +1,17 @@
-const path = require('path')
+const path = require("path");
 const webpack = require("webpack");
-const UglifyPlugin = require('uglifyjs-webpack-plugin')
+const UglifyPlugin = require("uglifyjs-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const { VueLoaderPlugin } = require('vue-loader')
+const { VueLoaderPlugin } = require("vue-loader");
+const SpeedMeasurePlugin = require("speed-measure-webpack-plugin");
+const ProgressBarWebpackPlugin = require("progress-bar-webpack-plugin");
+// const DashboardPlugin = require('webpack-dashboard/plugin');
 
-module.exports = {
+const smp = new SpeedMeasurePlugin();
+
+module.exports = smp.wrap({
   entry: "./src/index.js",
 
   output: {
@@ -17,73 +22,73 @@ module.exports = {
     port: 4000,
     open: true,
     proxy: {
-      '/api': {
+      "/api": {
         target: "http://localhost:3100", // 将 URL 中带有 /api 的请求代理到本地的 3000 端口的服务上
-        pathRewrite: { '^/api': '' }, // 把 URL 中 path 部分的 `api` 移除掉
-      },
+        pathRewrite: { "^/api": "" } // 把 URL 中 path 部分的 `api` 移除掉
+      }
     }
-  },
-  resolve: {
-    alias: {
-      page: path.resolve(__dirname, "src/page") // 这里使用 path.resolve 和 __dirname 来获取绝对路径
-      // log$: path.resolve(__dirname, "src/utils/log.js") // 只匹配 log
-    },
-    extensions: [".js", ".json", ".jsx", ".css", ".less"],
-    modules: [
-      path.resolve(__dirname, "node_modules") // 指定当前目录下的 node_modules 优先查找
-    ]
   },
   module: {
     rules: [
       {
         test: /\.jsx?/,
         include: [path.resolve(__dirname, "src")],
-        use: "babel-loader"
+        use: ["cache-loader", "babel-loader"]
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
+        use: ["cache-loader", "vue-loader"]
+        // loader: 'vue-loader'
       },
       {
         test: /\.css$/,
         // 因为这个插件需要干涉模块转换的内容，所以需要使用它对应的 loader
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: "css-loader"
+          use: ["cache-loader", "css-loader"]
         })
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          "cache-loader",
+          "style-loader", // 将 JS 字符串生成为 style 节点
+          "css-loader", // 将 CSS 转化成 CommonJS 模块
+          "sass-loader" // 将 Sass 编译成 CSS，默认使用 Node Sass
+        ]
       },
       {
         test: /\.less$/,
         // 因为这个插件需要干涉模块转换的内容，所以需要使用它对应的 loader
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
-          use: ["css-loader", "less-loader"]
+          use: ["cache-loader", "css-loader", "less-loader"]
         })
       },
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
+        loader: "url-loader",
         options: {
-            limit: 10000
+          limit: 10000
         }
       },
       {
         test: /\.(png|jpg|gif)$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {}
-          }
-        ]
+        use: ["cache-loader", "file-loader"]
       }
     ]
   },
 
   // 代码模块路径解析的配置
   resolve: {
-    modules: ["node_modules", path.resolve(__dirname, "src")],
-
-    extensions: [".wasm", ".mjs", ".js", ".json", ".jsx"]
+    alias: {
+      '@': path.resolve(__dirname, "src") // 这里使用 path.resolve 和 __dirname 来获取绝对路径
+      // log$: path.resolve(__dirname, "src/utils/log.js") // 只匹配 log
+    },
+    extensions: [".js", ".json", ".jsx", ".css", ".less", "scss"],
+    modules: [
+      path.resolve(__dirname, "node_modules") // 指定当前目录下的 node_modules 优先查找
+    ]
   },
 
   plugins: [
@@ -92,6 +97,10 @@ module.exports = {
     // 这其实也是我们命令中的 --mode production 的效果，后续的小节会介绍 webpack 的 mode 参数
     new UglifyPlugin(),
     new VueLoaderPlugin(),
+    // 展示构建进度的 Plugin
+    new ProgressBarWebpackPlugin(),
+    // 面板 Plugin
+    // new DashboardPlugin(),
     // 通过 html-webpack-plugin 就可以将我们的页面和构建 JS 关联起来
     new HtmlWebpackPlugin({
       filename: "index.html", // 配置输出文件名和路径
@@ -116,6 +125,6 @@ module.exports = {
     new webpack.ProvidePlugin({
       _: "lodash"
     }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
   ]
-};
+});
