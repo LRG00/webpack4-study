@@ -2,7 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const os = require('os');
 const HappyPack = require('happypack');
-const UglifyPlugin = require("uglifyjs-webpack-plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
@@ -168,10 +167,6 @@ module.exports = (env, argv) => {
           }
         ]
       }),
-      // 使用 uglifyjs-webpack-plugin 来压缩 JS 代码
-      // 如果你留意了我们一开始直接使用 webpack 构建的结果，你会发现默认已经使用了 JS 代码压缩的插件
-      // 这其实也是我们命令中的 --mode production 的效果，后续的小节会介绍 webpack 的 mode 参数
-      new UglifyPlugin(),
       new VueLoaderPlugin(),
       // 展示构建进度的 Plugin
       new ProgressBarWebpackPlugin(),
