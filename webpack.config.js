@@ -23,14 +23,14 @@ module.exports = (env, argv) => {
   
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: "[name].[hash:5].js"
+      filename: "[name].[hash:5].bundle.js"
     },
     devServer: {
-      port: 4004,
+      port: 40011,
       open: true,
       proxy: {
         "/api": {
-          target: "http://localhost:3100", // 将 URL 中带有 /api 的请求代理到本地的 3000 端口的服务上
+          target: "http://120.77.239.216:3000", // 将 URL 中带有 /api 的请求代理到本地的 3000 端口的服务上
           pathRewrite: { "^/api": "" } // 把 URL 中 path 部分的 `api` 移除掉
         }
       }
@@ -127,6 +127,23 @@ module.exports = (env, argv) => {
             "cache-loader",
             "style-loader",
             "css-loader",
+            {//需在css-loader/style-loader后面，在其他预处理前面
+              loader: 'postcss-loader',
+              options: {
+  
+                plugins: [
+                  require('autoprefixer')
+                ],
+                browsers: [
+                  '> 1%',
+                  'last 5 versions',
+                  'not ie <= 9',
+                  'ios >= 8',
+                  'android >= 4.0'
+                ],
+                sourceMap: devMode
+              }
+            },
             {
               loader: "less-loader",
               // 不加javascriptEnabled: true 会报 .bezierEasingMixin(); 的错误
@@ -167,14 +184,13 @@ module.exports = (env, argv) => {
         path.resolve(__dirname, "node_modules") // 指定当前目录下的 node_modules 优先查找
       ]
     },
-  
     plugins: [
       new HappyPack({
-        id: 'sass',//用id来标识 happypack处理那里类文件
+        id: 'less',//用id来标识 happypack处理那里类文件
         threadPool: happyThreadPool, //共享进程池
         loaders: [
           {
-            loader: 'sass-loader'
+            loader: 'less-loader'
           }
         ]
       }),
