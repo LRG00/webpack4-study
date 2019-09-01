@@ -26,8 +26,8 @@ module.exports = (env, argv) => {
       filename: "[name].[hash:5].js"
     },
     devServer: {
-      port: 4000,
-      open: false,
+      port: 4004,
+      open: true,
       proxy: {
         "/api": {
           target: "http://localhost:3100", // 将 URL 中带有 /api 的请求代理到本地的 3000 端口的服务上
@@ -123,7 +123,18 @@ module.exports = (env, argv) => {
         {
           test: /\.less$/,
           // 因为这个插件需要干涉模块转换的内容，所以需要使用它对应的 loader
-            use: ["cache-loader", "style-loader", "css-loader", "less-loader"]
+          use: [
+            "cache-loader",
+            "style-loader",
+            "css-loader",
+            {
+              loader: "less-loader",
+              // 不加javascriptEnabled: true 会报 .bezierEasingMixin(); 的错误
+              options: {
+                javascriptEnabled: true
+              }
+            }
+          ],
         },
         {
           test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
