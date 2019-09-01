@@ -27,7 +27,7 @@ module.exports = (env, argv) => {
     },
     devServer: {
       port: 4000,
-      open: true,
+      open: false,
       proxy: {
         "/api": {
           target: "http://localhost:3100", // 将 URL 中带有 /api 的请求代理到本地的 3000 端口的服务上
