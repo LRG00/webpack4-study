@@ -1,13 +1,7 @@
-<template name="component-name">
-  <div>
-  <div class="icons-list">
-    <a-icon type="home" />
-    <a-icon type="setting" theme="filled" />
-    <a-icon type="smile" theme="outlined" />
-    <a-icon type="sync" spin />
-    <a-icon type="loading" />
-  </div>
-  </div>
+<template>
+    <div>
+      <router-view/>
+    </div>
 </template>
 <script>
 import { login } from '@/api/login'

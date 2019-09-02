@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
       filename: "[name].[hash:5].bundle.js"
     },
     devServer: {
-      port: 40011,
+      port: 4001,
       open: true,
       proxy: {
         "/api": {
@@ -179,7 +179,7 @@ module.exports = (env, argv) => {
       alias: {
         "@": path.resolve(__dirname, "src") // 这里使用 path.resolve 和 __dirname 来获取绝对路径
       },
-      extensions: [".js", ".json", ".jsx", ".css", ".less", "scss"],
+      extensions: [".js", ".json", ".jsx", "vue", ".css", ".less", "scss"],
       modules: [
         path.resolve(__dirname, "node_modules") // 指定当前目录下的 node_modules 优先查找
       ]

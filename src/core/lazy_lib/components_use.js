@@ -17,7 +17,7 @@ import {
   Checkbox,
   Select,
   Card,
-  // Form,
+  Form,
   Row,
   Col,
   Modal,
@@ -59,7 +59,7 @@ Vue.use(Radio)
 Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
-// Vue.use(Form)
+Vue.use(Form)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)
