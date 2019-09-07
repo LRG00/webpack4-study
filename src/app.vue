@@ -4,11 +4,9 @@
     </div>
 </template>
 <script>
-import { login } from '@/api/login'
   export default {
     data() {
       return {
-        login,
         form: {
           name: '',
           region: '',
@@ -22,9 +20,6 @@ import { login } from '@/api/login'
       }
     },
     mounted() {
-      login().then(res => {
-        console.log(res)
-      })
     },
     methods: {
       onSubmit() {
